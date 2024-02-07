@@ -24,7 +24,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         }
         break;
     case 'PUT':
-        // Mise à jour d'un commentaire spécifique
+        // Mise à jour d'un avis spécifique
         if (isset($_GET['id'])) {
             $data = json_decode(file_get_contents('php://input'), true);
             $controlleurAvis->modifierAvisJSON($_GET['id'], $data);
@@ -33,16 +33,28 @@ switch ($_SERVER['REQUEST_METHOD']) {
         }
         break;
     case 'DELETE':
-        // Suppression d'un commentaire spécifique
+        // Suppression d'un avis spécifique
         if (isset($_GET['id'])) {
             $controlleurAvis->supprimerAvisJSON($_GET['id']);
         } else {
             echo json_encode(['message' => 'Paramètre id manquant pour la requête (DELETE).']);
         }
         break;
-    default:
+
+    case 'PATCH':
+        if (isset($_GET['id'])) {
+            $id = $_GET['id'];
+            $data = json_decode(file_get_contents('php://input'), true);
+            $controlleurAvis->patchAvisJSON($id, $data);
+        } else {
+            echo json_encode(['message' => 'Paramètre id manquant pour la mise à jour partielle (PATCH)).']);
+        }
+        break;
+
+        default:
         echo json_encode(['message' => 'Méthode HTTP non prise en charge pour cette opération.']);
         break;
+
 }
 
 ?>

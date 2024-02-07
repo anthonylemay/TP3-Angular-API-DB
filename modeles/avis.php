@@ -49,7 +49,7 @@ class modele_avis {
     /**
      * Fonction pour avoir tous les avis d'une vidéo
      */
-    public static function obtenirTousAvisVideo($video_id) {
+    public static function obtenirAvisParVideo($video_id) {
         $mysqli = self::connecter();
         $avis = [];
         if ($requete = $mysqli->prepare("SELECT avis.id AS avis_id, avis.video_id, avis.auteur_id, avis.commentaire, avis.reaction, avis.note, avis.date, auteurs.nom, auteurs.pseudo, auteurs.verifie, auteurs.description, auteurs.url_pic, coordonnees.*
@@ -83,10 +83,10 @@ class modele_avis {
     /**
      * Fonction pour modifier un avis
      */
-    public static function modifierAvis($id, $commentaire, $reaction, $note) {
+    public static function modifierAvis($id, $commentaire, $reaction, $note, $date) {
         $mysqli = self::connecter();
-        if ($requete = $mysqli->prepare("UPDATE avis SET commentaire = ?, reaction = ?, note = ? WHERE id = ?")) {
-            $requete->bind_param("siii", $commentaire, $reaction, $note, $id);
+        if ($requete = $mysqli->prepare("UPDATE avis SET commentaire = ?, reaction = ?, note = ?, date = ? WHERE id = ?")) {
+            $requete->bind_param("ssisi", $commentaire, $reaction, $note, $date, $id);
             if ($requete->execute()) {
                 return "Avis #$id mis à jour avec succès.";
             } else {
@@ -98,6 +98,57 @@ class modele_avis {
     }
 
     /**
+     * Fonction pour modifier une Réaction (like, dislike, null)
+     */
+    public static function modifierReaction($id, $reaction) {
+        $mysqli = self::connecter();
+        if ($requete = $mysqli->prepare("UPDATE avis SET reaction = ? WHERE id = ?")) {
+            $requete->bind_param("si", $reaction, $id);
+            if ($requete->execute()) {
+                return "Réaction sur l'avis #$id mis à jour avec succès.";
+            } else {
+                return "Erreur lors de la mise à jour de la réaction sur l'avis: " . $requete->error;
+            }
+        } else {
+            return "Erreur de préparation de la requête: " . $mysqli->error;
+        }
+    }
+
+    public static function viderCommentaire($id) {
+        $mysqli = self::connecter();
+        if ($requete = $mysqli->prepare("UPDATE avis SET commentaire = NULL, note = NULL WHERE id = ?")) {
+            $requete->bind_param("i", $id);
+            if ($requete->execute()) {
+                return "Commentaire et note vidés avec succès pour l'avis #$id.";
+            } else {
+                return "Erreur lors de la vidange du commentaire et de la note: " . $requete->error;
+            }
+        } else {
+            return "Erreur de préparation de la requête: " . $mysqli->error;
+        }
+    }
+    
+
+
+    /**
+     * Fonction pour modifier un commentaire / score
+     */
+    public static function modifierCommentaire($id, $commentaire, $note) {
+        $mysqli = self::connecter();
+        if ($requete = $mysqli->prepare("UPDATE avis SET commentaire = ?, note = ? WHERE id = ?")) {
+            $requete->bind_param("sii", $commentaire, $note, $id);
+            if ($requete->execute()) {
+                return "Commentaire et note sur l'avis #$id mis à jour avec succès.";
+            } else {
+                return "Erreur lors de la mise à jour du commentaire et de la note sur l'avis: " . $requete->error;
+            }
+        } else {
+            return "Erreur de préparation de la requête: " . $mysqli->error;
+        }
+    }
+
+
+    /**
      * Fonction pour supprimer un commentaire
      */
     public static function supprimerAvis($id) {
@@ -105,7 +156,7 @@ class modele_avis {
         if ($requete = $mysqli->prepare("DELETE FROM avis WHERE id = ?")) {
             $requete->bind_param("i", $id);
             if ($requete->execute()) {
-                return "Commentaire #$id supprimé avec succès.";
+                return "Avis #$id supprimé avec succès.";
             } else {
                 return "Erreur lors de la suppression du commentaire: " . $requete->error;
             }
