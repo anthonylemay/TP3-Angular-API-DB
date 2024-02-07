@@ -57,7 +57,7 @@ class modele_video {
         $mysqli = self::connecter();
         $liste = [];
     
-        // Updated query to fetch detailed auteur information along with video details
+        // Va chercher toute l'info sur la vidéo, l'auteur et ses coorodnnées, ainsi que les avis par vidéo.
         $query = "
             SELECT 
                 videos.*, 
@@ -105,6 +105,7 @@ class modele_video {
                     'score' => $enregistrement['score'],
                     'closedcaption' => $enregistrement['closedcaption'],
                     'subtitle' => $enregistrement['subtitle'],
+                    // Aller chercher tous les avis reliés à chaque vidéo
                     'avis' => self::ObtenirAvisVideo($enregistrement['id']),
                 ];
                 $liste[] = $video;
@@ -236,6 +237,7 @@ class modele_video {
                     'note' => $row['note'],
                     'commentaires' => $row['commentaire'],
                     'reaction' => $row['reaction'],
+                    'date' => $row['date'],
                 ];
             }
             $requete->close();
