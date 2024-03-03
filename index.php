@@ -1,14 +1,19 @@
 <?php
 ini_set('display_errors', 1); // debug - enlever au déploiement réel
+header('Access-Control-Allow-Origin: *'); // Adjust the wildcard to a specific domain for production environments
+
 error_reporting(E_ALL); // debug - enlever au déploiement réel
 
     header('Content-Type: application/json;');
     header('Access-Control-Allow-Origin: *'); // Permet de faire n'importe quel action dans l'API. zéro sécuritaire en vrai environnement live.
     require_once 'controlleurs/videos.php';
+    require_once 'controlleurs/categories.php';
     $controlleurVideo = new ControlleurVideo;
+    $controlleurCategorie = new ControlleurCategorie;
 
     switch($_SERVER['REQUEST_METHOD']){
         case 'GET': // Gestion des demandes de type get
+
         if (isset($_GET['id'])){ // récupère l'enregistrement correspondant à l'identifiant passé en paramètre
             $controlleurVideo->afficherFicheJSON($_GET['id']); }
         else{

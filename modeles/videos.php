@@ -9,6 +9,7 @@ class modele_video {
     public $description;
     public $code;
     public $categorie_id;
+
     public $auteur_id;
     public $date;
     public $duree;
@@ -60,38 +61,46 @@ class modele_video {
         // Va chercher toute l'info sur la vidéo, l'auteur et ses coorodnnées, ainsi que les avis par vidéo.
         $query = "
             SELECT 
-                videos.*, 
-                auteurs.nom AS auteur_nom, 
-                auteurs.pseudo, 
-                auteurs.verifie, 
-                auteurs.description AS auteur_description, 
-                auteurs.url_pic, 
-                coordonnees.courriel, 
-                coordonnees.facebook, 
-                coordonnees.instagram, 
-                coordonnees.twitch, 
-                coordonnees.site_web 
-            FROM videos
-            JOIN auteurs ON videos.auteur_id = auteurs.id
-            LEFT JOIN coordonnees ON auteurs.id = coordonnees.auteur_id
+            videos.*,
+            categories.nom AS categorie_nom,
+            auteurs.nom AS auteur_nom, 
+            auteurs.pseudo, 
+            auteurs.verifie, 
+            auteurs.description AS auteur_description, 
+            auteurs.url_pic, 
+            coordonnees.id AS coordonnees_id,
+            coordonnees.courriel, 
+            coordonnees.facebook, 
+            coordonnees.instagram, 
+            coordonnees.twitch, 
+            coordonnees.site_web 
+        FROM videos
+        JOIN auteurs ON videos.auteur_id = auteurs.id
+        JOIN categories ON videos.categorie_id = categories.id
+        LEFT JOIN coordonnees ON auteurs.id = coordonnees.auteur_id
         ";
         
         if ($resultatRequete = $mysqli->query($query)) {
             while ($enregistrement = $resultatRequete->fetch_assoc()) {
                 $video = [
-                    'id' => $enregistrement['id'],
+                    'id' => (int) $enregistrement['id'],
                     'url_img' => $enregistrement['url_img'],
                     'nom' => $enregistrement['nom'],
                     'description' => $enregistrement['description'],
                     'code' => $enregistrement['code'],
-                    'categorie_id' => $enregistrement['categorie_id'],
+                    'categorie' => [
+                        'id' => (int) $enregistrement['categorie_id'],
+                        'nom' => $enregistrement['categorie_nom']
+                    ],
                     'auteur' => [
+                        'id' => (int) $enregistrement['auteur_id'],
                         'nom' => $enregistrement['auteur_nom'],
                         'pseudo' => $enregistrement['pseudo'],
                         'verifie' => (bool) $enregistrement['verifie'],
                         'description' => $enregistrement['auteur_description'],
                         'url_pic' => $enregistrement['url_pic'],
                         'coordonnees' => [
+                            'id' => (int) $enregistrement['coordonnees_id'],
                             'courriel' => $enregistrement['courriel'],
                             'facebook' => $enregistrement['facebook'],
                             'instagram' => $enregistrement['instagram'],
@@ -102,9 +111,9 @@ class modele_video {
                     'date' => $enregistrement['date'],
                     'duree' => $enregistrement['duree'],
                     'vues' => $enregistrement['vues'],
-                    'score' => $enregistrement['score'],
-                    'closedcaption' => $enregistrement['closedcaption'],
-                    'subtitle' => $enregistrement['subtitle'],
+                    'score' => (int) $enregistrement['score'],
+                    'closedcaption' => (int)  $enregistrement['closedcaption'],
+                    'subtitle' =>(int)  $enregistrement['subtitle'],
                     // Aller chercher tous les avis reliés à chaque vidéo
                     'avis' => self::ObtenirAvisVideo($enregistrement['id']),
                 ];
@@ -129,12 +138,14 @@ class modele_video {
         // Commande SQL pour aller chercher l'info de l'auteur
         if ($requete = $mysqli->prepare("
             SELECT 
-                videos.*, 
+                videos.*,
+                categories.nom AS categorie_nom,
                 auteurs.nom AS auteur_nom, 
                 auteurs.pseudo, 
                 auteurs.verifie, 
                 auteurs.description AS auteur_description, 
-                auteurs.url_pic, 
+                auteurs.url_pic,
+                coordonnees.id AS coordonnees_id,
                 coordonnees.courriel, 
                 coordonnees.facebook, 
                 coordonnees.instagram, 
@@ -142,6 +153,7 @@ class modele_video {
                 coordonnees.site_web 
             FROM videos
             JOIN auteurs ON videos.auteur_id = auteurs.id
+            JOIN categories ON videos.categorie_id = categories.id
             LEFT JOIN coordonnees ON auteurs.id = coordonnees.auteur_id 
             WHERE videos.id=?
         ")) { //requête du id de la vidéo.
@@ -152,19 +164,24 @@ class modele_video {
             if ($enregistrement = $result->fetch_assoc()) {
                 //Compilation des données avec l'ajout détaillé de l'auteur
                 $video = [
-                    'id' => $enregistrement['id'],
+                    'id' => (int) $enregistrement['id'],
                     'url_img' => $enregistrement['url_img'],
                     'nom' => $enregistrement['nom'],
                     'description' => $enregistrement['description'],
                     'code' => $enregistrement['code'],
-                    'categorie_id' => $enregistrement['categorie_id'],
+                    'categorie' => [
+                        'id' => (int) $enregistrement['categorie_id'],
+                        'nom' => $enregistrement['categorie_nom']
+                    ],
                     'auteur' => [ 
+                        'id' => (int)  $enregistrement['auteur_id'],
                         'nom' => $enregistrement['auteur_nom'],
                         'pseudo' => $enregistrement['pseudo'],
                         'verifie' => (bool) $enregistrement['verifie'],
                         'description' => $enregistrement['auteur_description'],
                         'url_pic' => $enregistrement['url_pic'],
                         'coordonnees' => [
+                            'id' => (int) $enregistrement['coordonnees_id'],
                             'courriel' => $enregistrement['courriel'],
                             'facebook' => $enregistrement['facebook'],
                             'instagram' => $enregistrement['instagram'],
@@ -175,9 +192,9 @@ class modele_video {
                     'date' => $enregistrement['date'],
                     'duree' => $enregistrement['duree'],
                     'vues' => $enregistrement['vues'],
-                    'score' => $enregistrement['score'],
-                    'closedcaption' => $enregistrement['closedcaption'],
-                    'subtitle' => $enregistrement['subtitle'],
+                    'score' => (int) $enregistrement['score'],
+                    'closedcaption' => (int)  $enregistrement['closedcaption'],
+                    'subtitle' => (int) $enregistrement['subtitle'],
                     // Aller chercher tous les avis pour la vidéo
                     'avis' => self::ObtenirAvisVideo($enregistrement['id']),
                 ];
@@ -198,12 +215,13 @@ class modele_video {
         $avis = [];
         if ($requete = $mysqli->prepare("
             SELECT 
-                avis.*, 
+                avis.*,
                 auteurs.nom AS auteur_nom, 
                 auteurs.pseudo, 
                 auteurs.verifie, 
                 auteurs.description AS auteur_description, 
-                auteurs.url_pic, 
+                auteurs.url_pic,
+                coordonnees.id AS coordonnees_id, 
                 coordonnees.courriel, 
                 coordonnees.facebook, 
                 coordonnees.instagram, 
@@ -218,26 +236,28 @@ class modele_video {
             $requete->execute();
             $result = $requete->get_result();
             
-            while ($row = $result->fetch_assoc()) {
+            while ($enregistrement = $result->fetch_assoc()) {
                 $avis[] = [
                     'auteur' => [
-                        'nom' => $row['auteur_nom'],
-                        'pseudo' => $row['pseudo'],
-                        'verifie' => (bool) $row['verifie'],
-                        'description' => $row['auteur_description'],
-                        'url_pic' => $row['url_pic'],
+                        'id' => (int) $enregistrement['auteur_id'],
+                        'nom' => $enregistrement['auteur_nom'],
+                        'pseudo' => $enregistrement['pseudo'],
+                        'verifie' => (bool) $enregistrement['verifie'],
+                        'description' => $enregistrement['auteur_description'],
+                        'url_pic' => $enregistrement['url_pic'],
                         'coordonnees' => [
-                            'courriel' => $row['courriel'],
-                            'facebook' => $row['facebook'],
-                            'instagram' => $row['instagram'],
-                            'twitch' => $row['twitch'],
-                            'site_web' => $row['site_web'],
+                            'id'=> (int) $enregistrement['coordonnees_id'],
+                            'courriel' => $enregistrement['courriel'],
+                            'facebook' => $enregistrement['facebook'],
+                            'instagram' => $enregistrement['instagram'],
+                            'twitch' => $enregistrement['twitch'],
+                            'site_web' => $enregistrement['site_web'],
                         ],
                     ],
-                    'note' => $row['note'],
-                    'commentaires' => $row['commentaire'],
-                    'reaction' => $row['reaction'],
-                    'date' => $row['date'],
+                    'note' => (int) $enregistrement['note'],
+                    'commentaires' => $enregistrement['commentaire'],
+                    'reaction' => $enregistrement['reaction'],
+                    'date' => $enregistrement['date'],
                 ];
             }
             $requete->close();
@@ -339,6 +359,7 @@ class modele_video {
         return $message;
     }
     
+
 
 
 }
