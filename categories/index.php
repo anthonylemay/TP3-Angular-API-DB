@@ -1,26 +1,33 @@
 <?php
-ini_set('display_errors', 1); // Pour le débogage. À ajuster pour un environnement de production
-error_reporting(E_ALL); // Pour le débogage. À ajuster pour un environnement de production
 
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *'); // Note : À ajuster pour un environnement de production
+ini_set('display_errors', 1); // For debugging, adjust for production environment
+error_reporting(E_ALL); // For debugging, adjust for production environment
+
+header('Access-Control-Allow-Headers: Access-Control-Allow-Origin, Content-Type');
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json, charset=utf-8');
+header("Access-Control-Allow-Methods: POST, DELETE, PUT, GET, OPTIONS");
 
 require_once '../controlleurs/categories.php';
 
+// Handle OPTIONS request method explicitly for CORS preflight
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    // No further action is needed, just respond with success status
+    http_response_code(200);
+    exit();
+}
 
 $controlleurCategorie = new ControlleurCategorie();
 
 switch ($_SERVER['REQUEST_METHOD']) {
+    
     case 'GET':
-        // Récupération des commentaires pour toutes les catégories
+        // Fetching categories
         $controlleurCategorie->afficherCategoriesJSON();
         break;
-   
-
-        default:
-        echo json_encode(['message' => 'Méthode HTTP non prise en charge pour cette opération.']);
+    default:
+        echo json_encode(['message' => 'HTTP method not supported for this operation.']);
         break;
-
 }
 
 ?>
