@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 04, 2024 at 04:57 AM
+-- Generation Time: Mar 05, 2024 at 09:25 AM
 -- Server version: 8.0.31
 -- PHP Version: 7.4.33
 
@@ -71,7 +71,6 @@ INSERT INTO `avis` (`id`, `video_id`, `auteur_id`, `reaction`, `commentaire`, `n
 (4, 1, 3, 'like', 'commentaires 1', 9, '2003-11-20 19:49:35'),
 (5, 1, 2, NULL, 'commentaires 2', NULL, '2003-08-27 21:54:48'),
 (8, 3, 5, NULL, 'commentaires 3', 8, '2020-12-25 21:09:02'),
-(10, 5, 1, NULL, 'commentaires 5', 10, '2008-08-11 14:18:41'),
 (11, 1, 2, 'like', 'commentaires 6', 5, '2003-11-20 19:49:35'),
 (12, 1, 4, 'dislike', 'commentaires 7', 5, '2003-11-20 19:49:35'),
 (13, 1, 1, NULL, 'commentaires Test put - modification reaction score', 5, '2003-11-21 14:41:14'),
@@ -158,12 +157,14 @@ CREATE TABLE `videos` (
 --
 
 INSERT INTO `videos` (`id`, `url_img`, `nom`, `description`, `code`, `categorie_id`, `auteur_id`, `date`, `duree`, `vues`, `score`, `closedcaption`, `subtitle`) VALUES
-(1, 'https://picsum.photos/200/300?random=8', 'vidéo 1', 'description de film 1', 'ABC008', 5, 3, '2003-02-11', 686, 11498, 5900, 1, 1),
-(3, 'https://picsum.photos/200/300?random=3', 'vidéo 3', 'description de film 3', 'ABC003', 5, 5, '2020-07-12', 345, 1, 4500, 1, 0),
-(5, 'https://picsum.photos/200/300?random=5', 'vidéo 5', 'description de film 5', 'ABC005', 2, 5, '2008-01-15', 99, 0, 7500, 0, 0),
+(1, 'https://picsum.photos/200/300?random=13', 'vidéo 1', 'description de film 1', 'ABC008', 3, 3, '2003-02-11', 686, 11498, 5900, 1, 1),
+(3, 'https://picsum.photos/200/300?random=3', 'vidéo 34', 'description de film 3', 'ABC003', 5, 5, '2020-07-12', 345, 1, 4500, 1, 0),
 (6, 'https://picsum.photos/200/300?random=6', 'vidéo 6', 'description de film 6', 'ABC006', 4, 4, '2015-04-04', 180, 330, 2500, 0, 0),
-(10, 'https://picsum.photos/200/300?random=8', 'vidéo 8', 'description de film 8', 'ABC007', 4, 3, '2003-02-11', 686, 11498, 5800, 1, 1),
-(20, 'https://picsum.photos/200/300?random=9', 'vidéo test', 'description de film 15', 'ABC011', 5, 3, '2003-02-11', 686, 11498, 5800, 1, 0);
+(20, 'https://picsum.photos/200/300?random=9', 'vidéo test', 'description de film 15', 'ABC011', 5, 3, '2003-02-11', 686, 11498, 5800, 1, 0),
+(23, 'https://picsum.photos/200/300?random=9', 'vidéo test 2', 'description de film 15', 'ABC0000', 3, 3, '2003-02-11', 686, 11498, 5800, 1, 0),
+(25, 'https://picsum.photos/200/300?random=2', 'vidéo test 2', 'description de film 15', 'eeefef', 3, 3, '2003-02-11', 686, 11498, 5800, 1, 0),
+(26, 'https://picsum.photos/200/300?random=8', 'test 3', 'Default Description', 'ABC30321', 1, 2, '2024-03-05', 0, 1234, 1234, 0, 0),
+(27, 'https://picsum.photos/200/300?random=8', 'test2', 'description', 'YAYYY', 1, 1, '2024-03-05', 1245, 134, 1335, 1, 0);
 
 --
 -- Indexes for dumped tables
@@ -238,7 +239,7 @@ ALTER TABLE `coordonnees`
 -- AUTO_INCREMENT for table `videos`
 --
 ALTER TABLE `videos`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- Constraints for dumped tables
