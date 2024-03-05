@@ -8,7 +8,7 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json, charset=utf-8');
 header("Access-Control-Allow-Methods: POST, DELETE, PUT, GET, OPTIONS");
 
-require_once '../controlleurs/categories.php';
+require_once '../controlleurs/auteurs.php';
 
 // Handle OPTIONS request method explicitly for CORS preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -17,13 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-$controlleurCategorie = new ControlleurCategorie();
+$controlleurCategorie = new ControlleurAuteur();
 
 switch ($_SERVER['REQUEST_METHOD']) {
     
     case 'GET':
         // Fetching categories
-        $controlleurCategorie->afficherCategoriesJSON();
+        $controlleurCategorie->afficherAuteursJSON();
         break;
     default:
         echo json_encode(['message' => 'HTTP method not supported for this operation.']);
